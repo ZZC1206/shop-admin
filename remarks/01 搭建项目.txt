@@ -1,0 +1,245 @@
+注：***项目的创建与相关配置***
+
+## 使用 vite 创建项目
+
+
+
+### 创建项目
+
+> 详情 [Vite 官方中文文档](https://cn.vitejs.dev/guide/#scaffolding-your-first-vite-project)
+
+```shell
+npm init vite@latest
+
+√ Project name: ... shop-admin
+√ Select a framework: » vue
+√ Select a variant: » vue-ts
+
+Scaffolding project in  F:\Qianduan\shop-admin...
+
+Done. Now run:
+
+  cd shop-admin
+  npm install
+  npm run dev
+```
+
+​	*注*：执行 `npm init vite@latest` 后不会询问 `? Project name: » vite-project`，会建议安装包 `y` 确定安装就好了。
+
+
+
+### 初始项目目录结构
+
+```shell
+.
+├── public					# 不需要打包的静态资源
+│   └── favicon.ico
+├── src
+│   ├── assets				# 需要打包的静态资源
+│   │   └── logo.png
+│   ├── components			# 公共组件
+│   │   └── HelloWorld.vue
+│   ├── App.vue				# 根组件
+│   ├── main.ts				# 入口模块
+│   ├── shims-vue.d.ts		# 补充 .vue 模块类型声明
+│   └── vite-env.d.ts		# 补充 vite 类型声明
+├── .gitignore
+├── README.md
+├── index.html
+├── package-lock.json
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
+
+
+
+### 调整项目目录结构
+
+```shell
+.
+├── public                  # 不需要打包的静态资源
+│   └── favicon.ico
+├── src
+│   ├── api                 # 后台 API 接口封装
+│   ├── assets              # 需要打包的静态资源
+│   ├── components          # 公共组件
+│   ├── composables         # 通用的组合式 API
+│   ├── layout              # 页面布局模板
+│   ├── plugins             # 插件
+│   ├── router              # 路由
+│   ├── store               # Vuex 存储
+│   ├── styles              # 样式
+│     └── index.scss        # 全局通用样式
+│   ├── utils               # 工具模块
+│   ├── views               # 路由页面
+│   ├── App.vue             # 根组件
+│   ├── main.ts             # 入口模块
+│   ├── shims-vue.d.ts      # 补充 .vue 模块类型声明
+│   └── vite-env.d.ts       # 补充 vite 类型声明
+├── .gitignore
+├── README.md
+├── index.html
+├── package-lock.json
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+```
+
+
+
+### 把项目上传到 Git 仓库
+
+```shell
+git init
+
+git add .
+
+git commit -m "init"
+
+git remote add origin 远程仓库地址
+
+git push -u origin master
+```
+
+
+
+## 代码规范和ESLint配置
+
+
+
+### 安装 ESLint 到项目中
+
+```shell
+npm install eslint --save-dev
+```
+
+
+
+### 初始化 ESLint 配置
+
+```shell
+npx eslint --init
+
+? How would you like to use ESLint? ...
+  To check syntax only
+  To check syntax and find problems
+> To check syntax, find problems, and enforce code style
+
+? What type of modules does your project use? ...
+> JavaScript modules (import/export)
+  CommonJS (require/exports)
+  None of these
+  
+ ? Which framework does your project use? ...
+  React
+> Vue.js
+  None of these
+  
+? Does your project use TypeScript? » No / Yes
+  
+? Where does your code run? ...  (Press <space> to select, <a> to toggle all, <i> to invert selection)
+√ Browser
+√ Node
+
+? How would you like to define a style for your project? ...
+> Use a popular style guide
+  Answer questions about your style
+  Inspect your JavaScript file(s)
+  
+? Which style guide do you want to follow? ...
+  Airbnb: https://github.com/airbnb/javascript
+> Standard: https://github.com/standard/standard
+  Google: https://github.com/google/eslint-config-google
+  XO: https://github.com/xojs/eslint-config-xo
+  
+ ? What format do you want your config file to be in? ...
+> JavaScript
+  YAML
+  JSON
+
+Checking peerDependencies of eslint-config-standard@latest
+The config that you've selected requires the following dependencies:
+
+eslint-plugin-vue@latest @typescript-eslint/eslint-plugin@latest eslint-config-standard@latest eslint@^7.12.1 eslint-plugin-import@^2.22.1 eslint-plugin-node@^11.1.0 eslint-plugin-promise@^4.2.1 || ^5.0.0 @typescript-eslint/parser@latest
+? Would you like to install them now with npm?
+
+```
+
+​	*注*：这里会询问是否安装相关的包，确定就行。
+
+
+
+### 配置 ESLint 文件
+
+```javascript
+module.exports = {
+  env: {
+    browser: true,
+    es2021: true
+  },
+  extends: [
+    // 'plugin:vue/essential',  
+    'plugin:vue/vue3-strongly-recommended',
+    'standard'
+  ],
+  parserOptions: {
+    ecmaVersion: 13,
+    parser: '@typescript-eslint/parser',
+    sourceType: 'module'
+  },
+  plugins: [
+    'vue',
+    '@typescript-eslint'
+  ],
+  rules: {
+    // indent: ['off', 2]
+  }
+}
+
+```
+
+​	*注：*这里 `plugin:vue` 配置的是`vue 2.x` 版本的，需要修改成 `plugin:vue/vue3-strongly-recommended` 不然 `<template>` 下存在多个标签会报错。[详情请阅读](https://eslint.vuejs.org/user-guide/#bundle-configurations)
+
+
+
+### 在 `npm scripts` 中添加验证脚本
+
+```json
+"scripts": {
+	...
+  "lint": "eslint src/**/*.{js,jsx,vue,ts,tsx} --fix",
+}
+```
+
+
+
+### 按需 定义全局变量
+
+​		需要定义全局变量 （打开新窗口）在 `ESLint ` 配置文件中，添加 `globals` 配置属性对象 [详情请阅读](https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals)
+
+```shell
+module.exports = {
+  globals: {
+    defineProps: "readonly",
+    defineEmits: "readonly",
+    defineExpose: "readonly",
+    withDefaults: "readonly"
+  }
+}
+```
+
+​		若不想定义全局变量，请使用 `import { defineProps, defineEmits } from 'vue'`
+
+### 编辑器集成
+
+- 禁用 `Vetur` 插件
+- 安装 `eslint` 插件
+
+- 安装 `volar ` 插件
+
+  *注：*有时候插件不会生效，需要重新启动vscode
+
+  
+
+## Git commit 提交规范
