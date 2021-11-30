@@ -9,7 +9,9 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "vue": "^3.2.16"
+        "@vitejs/plugin-vue-jsx": "^1.2.0",
+        "vue": "^3.2.16",
+        "vue-router": "^4.0.12"
     },
     "devDependencies": {
         "@commitlint/cli": "^14.1.0",
