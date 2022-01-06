@@ -1,4 +1,4 @@
-{
+{  
   "compilerOptions": {
     "target": "esnext",
     "useDefineForClassFields": true,
@@ -16,6 +16,15 @@
     "isolatedModules": true,
     "types": [
       "vite/client"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "typeRoots": [
+      "src/globalDeclare"
     ]
   },
   "include": [

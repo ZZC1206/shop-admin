@@ -1,6 +1,5 @@
 <template>
-  <div>首页</div>
-  <el-button>测试</el-button>
+  <h1>权限</h1>
 </template>
 
 <script lang="ts" setup></script>
