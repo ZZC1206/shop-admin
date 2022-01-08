@@ -43,3 +43,14 @@ export const getLoginInfo = () => {
   //   return res.data
   // })
 }
+
+export const getCaptcha = () => {
+  return request<Blob>({
+    method: 'GET',
+    url: '/admin/captcha_pro',
+    params: {
+      stamp: Date.now() // 加上时间戳，避免缓存问题
+    },
+    responseType: 'blob' // 请求获取图片数据
+  })
+}
