@@ -19,39 +19,24 @@
         <el-input
           v-model="user.account"
           placeholder="请输入用户名"
-        >
-          <template #prefix>
-            <el-icon>
-              <icoUser />
-            </el-icon>
-          </template>
-        </el-input>
+          :prefix-icon="icoUser"
+        />
       </el-form-item>
       <el-form-item prop="pwd">
         <el-input
           v-model="user.pwd"
-          type="password"
           placeholder="请输入密码"
-        >
-          <template #prefix>
-            <el-icon>
-              <lock />
-            </el-icon>
-          </template>
-        </el-input>
+          type="password"
+          :prefix-icon="Lock"
+        />
       </el-form-item>
       <el-form-item prop="imgcode">
         <div class="imgcode-wrap">
           <el-input
             v-model="user.imgcode"
             placeholder="请输入验证码"
-          >
-            <template #prefix>
-              <el-icon class="as">
-                <key />
-              </el-icon>
-            </template>
-          </el-input>
+            :prefix-icon="Key"
+          />
           <img
             class="imgcode"
             alt="验证码"
@@ -81,8 +66,12 @@ import {
   Lock,
   Key
 } from '@element-plus/icons-vue'
-import { getCaptcha } from '@/api/common'
+import { getCaptcha, login } from '@/api/common'
+import { useRouter } from 'vue-router'
+import type { IElForm, IFormRule } from '@/types/element-plus'
 
+const router = useRouter()
+const form = ref<IElForm | null>(null)
 const captChaSrc = ref('')
 const user = reactive({
   account: 'admin',
@@ -90,7 +79,7 @@ const user = reactive({
   imgcode: ''
 })
 const loading = ref(false)
-const rules = ref({
+const rules = ref<IFormRule>({
   account: [
     { required: true, message: '请输入账号', trigger: 'change' }
   ],
@@ -112,7 +101,22 @@ const loadCaptCha = async () => {
 }
 
 const handleSubmit = async () => {
-  console.log('handleSubmit')
+  // 表单验证
+  const valid = form.value?.validate
+  if (!valid) {
+    return false
+  }
+  // 验证通过，展示 loading
+  loading.value = true
+  // 请求提交
+  const data = await login(user).finally(() => {
+    loading.value = false
+  })
+  console.log(data)
+  // 处理响应
+  router.replace({
+    name: 'home'
+  })
 }
 
 </script>
@@ -164,12 +168,9 @@ const handleSubmit = async () => {
       height: 37px;
     }
   }
-  i {
-    font-size: 18px;
+  ::v-deep .el-input__icon {
+    font-size: 19px;
     cursor: pointer;
-  }
-  ::v-deep .el-input__prefix {
-    align-items: center;
   }
 }
 </style>

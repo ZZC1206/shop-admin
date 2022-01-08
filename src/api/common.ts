@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { ILoginInfo } from './types/common'
+import { ILoginInfo, ILoginResponse } from './types/common'
 
 // interface ResponseData<T = any> {
 //   status: number
@@ -52,5 +52,17 @@ export const getCaptcha = () => {
       stamp: Date.now() // 加上时间戳，避免缓存问题
     },
     responseType: 'blob' // 请求获取图片数据
+  })
+}
+
+export const login = (data: {
+  account: string,
+  pwd: string,
+  imgcode: string
+}) => {
+  return request<ILoginResponse>({
+    method: 'POST',
+    url: '/admin/login',
+    data
   })
 }
