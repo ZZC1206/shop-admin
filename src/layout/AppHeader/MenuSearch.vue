@@ -1,84 +1,111 @@
 <template>
   <el-autocomplete
     v-model="state"
-    :fetch-suggestions="querySearch"
-    popper-class="my-autocomplete"
+    :fetch-suggestions="querySearchAsync"
     placeholder="请输入内容"
-    class="inline-input"
-    value-key="menu_name"
+    @select="handleSelect"
+    popper-class="my-autocomplete"
   >
-    <!-- @select="handleSelect" -->
-
-    <template #default="{ item }">
-      <router-link
-        :to="item.menu_path"
-        custom
-        v-slot="{ href }"
+    <template #suffix>
+      <el-icon
+        class="el-input__icon"
       >
-        <el-link
-          class="menu-link"
-          :href="href"
-          :disabled="item.type === 1"
-          :underline="false"
-        >
-          <span class="link-text">{{ item.menu_name }}</span>
-          <!-- @click="handleLinkClick(item, $event)" -->
-        </el-link>
-      </router-link>
+        <search />
+      </el-icon>
+    </template>
+    <template #default="{ item }">
+      <div class="value">
+        {{ item.value }}
+      </div>
+      <span
+        class="link"
+        v-html="showData(item.link, state)"
+      />
     </template>
   </el-autocomplete>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import { Search } from '@element-plus/icons-vue'
+import { ref, onMounted } from 'vue'
+import { Search as search } from '@element-plus/icons-vue'
 
-// import { getMenus } from '@/api/home'
-// import type { Menu } from '@/api/types/home'
-
-// const menus = ref<Menu[]>([])
 const state = ref('')
-console.log(Search)
+
+interface LinkItem {
+  value: string
+  link: string
+}
+
+const links = ref<LinkItem[]>([])
+
+const loadAll = () => {
+  return [
+    { value: 'vue', link: 'https://github.com/vuejs/vue' },
+    { value: 'element', link: 'https://github.com/ElemeFE/element' },
+    { value: 'cooking', link: 'https://github.com/ElemeFE/cooking' },
+    { value: 'mint-ui', link: 'https://github.com/ElemeFE/mint-ui' },
+    { value: 'vuex', link: 'https://github.com/vuejs/vuex' },
+    { value: 'vue-router', link: 'https://github.com/vuejs/vue-router' },
+    { value: 'babel', link: 'https://github.com/babel/babel' }
+  ]
+}
+
+// let timeout: NodeJS.Timeout
+const querySearchAsync = (queryString: string, cb: (arg: any) => void) => {
+  const results = queryString
+    ? links.value.filter(createFilter(queryString))
+    : links.value
+
+  cb(results)
+  // clearTimeout(timeout)
+  // timeout = setTimeout(() => {
+  // }, 3000 * Math.random())
+}
+const createFilter = (queryString: string) => {
+  return (restaurant: LinkItem) => {
+    return (
+      restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+    )
+  }
+}
+
+const handleSelect = (item: LinkItem) => {
+  console.log(item)
+}
+
+// <!-- class="el-input__icon"
+// @click="handleIconClick" -->
+// const handleIconClick = (ev: Event) => {
+//   console.log(ev)
+// }
+
+const showData = (val: string, searchData: string) => {
+  // 不区分大小写  const Reg = new RegExp(searchData, 'i');
+  // 全局替换  const Reg = new RegExp(searchData, 'g');
+  const Reg = new RegExp(searchData, 'ig')
+  if (val) {
+    // 注意 这里推荐使用正则占位符$& 不使用${searchData}  因为当这里使用正则表达式（i）不区分大小写时，如果你的文本是大写，搜索的关键字是小写，匹配结果会替换掉大写的文本
+    // const res = val.replace(Reg, `<span style="background-color: yellow;">${searchData}</span>`);
+    // eslint-disable-next-line quotes
+    const res = val.replace(Reg, `<span style="background-color: #FAAB0C;">$&</span>`)
+    return res
+  }
+}
 
 onMounted(() => {
-  loadMenus()
+  links.value = loadAll()
 })
-
-const loadMenus = async () => {
-  // const data = await getMenus()
-  // menus.value = data
-}
-
-const querySearch = (queryString: string, cb: (val: any) => void) => {
-  console.log('querySearch', queryString)
-  // const results = queryString
-  //   ? menus.value.filter(item => item.menu_name.includes(queryString))
-  //   : menus.value
-  // // 调用 callback 返回建议列表的数据
-  // cb(results)
-}
-
-// const handleSelect = (item: Menu) => {
-//   console.log(item)
-//   return false
-// }
-
-// const handleLinkClick = (item: Menu, e: Event) => {
-//   if (item.type === 1) {
-//     e.preventDefault()
-//     e.stopPropagation()
-//   }
-// }
 </script>
 
-<style lang="scss" scoped>
-.is-disabled {
-  color: #c0c4cc;
-  cursor: not-allowed;
+<style lang="scss">
+.el-icon {
+  font-size: 20px !important;
+  cursor: pointer;
 }
 
-.menu-link,
-.link-text {
-  display: block;
+.value{
+  font-weight: 600;
+  margin-bottom: -10px;
 }
+
 </style>
