@@ -1,9 +1,13 @@
 import { createStore, Store, useStore as baseUseStore } from 'vuex'
 import { InjectionKey } from 'vue'
+import { IUserInfo } from '@/api/types/common'
+import { setItem, getItem } from '@/utils/storage'
+import { USER } from '@/utils/constants'
 
 const state = {
   isCollapse: false,
-  user: 'admin'
+  user: getItem<{ token: string } & IUserInfo>(USER)
+  // user: JSON.parse(window.localStorage.getItem('user') || 'null') as IUserInfo | null
   // menus: [] as IMenu[]
 }
 
@@ -21,7 +25,8 @@ export const store = createStore<State>({
     },
     setUser (state, payload) {
       state.user = payload
-      // setItem(USER, state.user)
+      // window.localStorage.setItem('user', JSON.stringify(state.user))
+      setItem(USER, state.user)
     }
   }
 })

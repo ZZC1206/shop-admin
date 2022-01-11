@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
+import { store } from '@/store'
 
 const request = axios.create({
   // baseURL: import.meta.env.VITE_API_BASEURL
@@ -7,7 +8,12 @@ const request = axios.create({
 
 // 请求拦截器
 request.interceptors.request.use(function (config) {
-  // 统一设置用户身份
+  // 统一设置用户身份 token
+  const user = store.state.user
+  if (user && user.token) {
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
+
   return config
 }, function (error) {
   // Do something with request error
@@ -29,8 +35,7 @@ request.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
-export default <T =any>(config: AxiosRequestConfig) => {
-  return request(config).then(res => {
-    return (res.data.data || res.data) as T
-  })
+export default async <T = any>(config: AxiosRequestConfig) => {
+  const res = await request(config)
+  return (res.data.data || res.data) as T
 }

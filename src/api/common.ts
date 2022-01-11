@@ -66,3 +66,10 @@ export const login = (data: {
     data
   })
 }
+
+export const logout = () => {
+  return request<ILoginResponse>({
+    method: 'GET',
+    url: '/admin/setting/admin/logout'
+  })
+}

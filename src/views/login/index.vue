@@ -69,6 +69,7 @@ import {
 import { getCaptcha, login } from '@/api/common'
 import { useRouter } from 'vue-router'
 import type { IElForm, IFormRule } from '@/types/element-plus'
+import { store } from '@/store'
 
 const router = useRouter()
 const form = ref<IElForm | null>(null)
@@ -112,7 +113,11 @@ const handleSubmit = async () => {
   const data = await login(user).finally(() => {
     loading.value = false
   })
-  console.log(data)
+  // store.commit('setUser', data.user_info)
+  store.commit('setUser', {
+    ...data.user_info,
+    token: data.token
+  })
   // 处理响应
   router.replace({
     name: 'home'

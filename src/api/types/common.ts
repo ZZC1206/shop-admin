@@ -8,7 +8,7 @@ export interface ILoginInfo {
 export interface IUserInfo {
   id: number
   account: string
-  hand_pic: string
+  head_pic: string
 }
 
 export interface IMenu {
@@ -16,17 +16,18 @@ export interface IMenu {
   title: string
   icon: string
   header: string
-  is_header: string
-  children:IMenu
+  is_header: number
+  children?: IMenu[]
 }
 
 export interface ILoginResponse {
   token: string
   expires_time: number
   menus: IMenu[]
-  unique_auth: IUserInfo
+  unique_auth: string[]
+  user_info: IUserInfo
   logo: string
   logo_square: string
   version: string
-  newOrderAuioLink: string
+  newOrderAudioLink: string
 }
